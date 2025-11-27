@@ -1,25 +1,38 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html>
 <head>
-    <style>
-body {  font-family: Arial, sans-serif;
-        text-align: center;
-        margin-top: 50px;
-        display: block;
-        ; margin: 20px; }
-input{ font-size:20px;
-        padding: 14px;
-        margin: 14px;
-        width: 60%;
-        margin: 0 auto;
-        display: lock;
-        border: 1px solid blue;
-        border-radius: 8px;  
-        background-color: lightblue;
-     }
-button { padding: 10px 15px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
-button:hover { background-color: #45a049; }
-#status { font-size: 20px; font-weight: bold; }
+<meta charset="utf-8">
+<style>
+body {
+	font-family: arial;
+	text-align: center;
+	margin-top: 50px;
+	display:block;
+}
+input{
+	font-size: 20px;
+	padding: 14px;
+	margin: 14px;
+	width: 60%;
+	margin: 0 auto;
+	display:block;
+	border: 1 px solid blue;
+	border-radius: 8px;
+}
+button {
+	display:block;
+	margin: 20px auto 0;
+	font-size: 20px;
+	padding: 14px;
+	background-color: lightblue;
+}
+button:hover {
+	color: #fff;
+	background-color: blue;
+}
+#status {
+	font-size: 20px;
+}
 </style>
 </head>
 <body>
@@ -33,18 +46,22 @@ button:hover { background-color: #45a049; }
 const targetLatitude = 42.03188; // Latitude da Loja
 const targetLongitude = -8.63318; // Longitude da Loja
 // URL do Webhook do Make
-const makeWebhookURL = "https://hook.eu1.make.com/l99ykt70hh8runev6hqhfftflgp1rbjo"; // Substituir pelo nosso Webhook do Make
+const makeWebhookURL = "https://hook.eu1.make.com/2jdyf4nn5c3tk7tbksbukhe3i8dlgusi"; // Substituir pelo nosso Webhook do Make
 // Função para capturar a localização do utilizador
 function getLocation() {
 const email = document.getElementById("email").value;
 if (!email) {
-document.getElementById("status").innerHTML = "Por favor, insira um email válido."; return;
+document.getElementById("status").innerHTML = "Por favor, insira um email válido.";
+return;
 }
 if (navigator.geolocation) {
-navigator.geolocation.getCurrentPosition( (position) => calculateDistanceAndSend(position, email), showError
+navigator.geolocation.getCurrentPosition(
+(position) => calculateDistanceAndSend(position, email),
+showError
 );
 } else {
-document.getElementById("status").innerHTML = "A Geolocalização não é suportada pelo navegador."; }
+document.getElementById("status").innerHTML = "A Geolocalização não é suportada pelo navegador.";
+}
 }
 // Função para calcular a distância e enviar os dados para o Webhook do Make
 function calculateDistanceAndSend(position, email) {
@@ -57,6 +74,8 @@ document.getElementById("status").innerHTML = `Distância calculada: ${distance.
 // Dados a serem enviados para o Make
 const data = {
 email: email,
+userlat: userLatitude,
+userlong: userLongitude,
 distance: distance.toFixed(2), // Enviar a distância com 2 casas decimais
 timestamp: new Date().toLocaleString()
 };
@@ -69,21 +88,26 @@ headers: {
 body: JSON.stringify(data)
 }).then(response => {
 if (response.ok) {
-document.getElementById("status").innerHTML = "Dados enviados com sucesso! Aguarde o email."; } else {
+document.getElementById("status").innerHTML = "Dados enviados com sucesso! Aguarde o email.";
+} else {
 document.getElementById("status").innerHTML = "Erro ao enviar os dados.";
 }
 }).catch(error => {
-document.getElementById("status").innerHTML = "Erro na ligação com o Make: " + error.message; });
+document.getElementById("status").innerHTML = "Erro na ligação com o Make: " + error.message;
+});
 }
-// Função para calcular a distância entre dois pontos geográﬁcos (em km) function calculateDistance(lat1, lon1, lat2, lon2) 
-{
+// Função para calcular a distância entre dois pontos geográficos (em km)
+function calculateDistance(lat1, lon1, lat2, lon2) {
 const R = 6371; // Raio da Terra Km
-const φ1 = lat1 * Math.PI / 180; // Converter latitude para radianos const φ2 = lat2 * Math.PI / 180;
+const φ1 = lat1 * Math.PI / 180; // Converter latitude para radianos
+const φ2 = lat2 * Math.PI / 180;
 const Δφ = (lat2 - lat1) * Math.PI / 180;
 const Δλ = (lon2 - lon1) * Math.PI / 180;
-const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) + Math.cos(φ1) * Math.cos(φ2) *
+const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+Math.cos(φ1) * Math.cos(φ2) *
 Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); return R * c; // Distância em Km
+const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+return R * c; // Distância em Km
 }
 // Função para tratar erros de geolocalização
 function showError(error) {
@@ -105,5 +129,3 @@ break;
 </script>
 </body>
 </html>
-
-
